@@ -20,6 +20,28 @@ export class Component{
 
 
 //// Router ////
+function routeRender(routes) {
+  if(!location.hash){
+    history.replaceState(null, '', '/#/');
+  }
+  const routerView = document.querySelector('router-view');
+  const [hash, quertString = ''] = location.hash.split('?');
+
+  const query = quertString
+    .split('&')
+    .reduce((acc, cur) => {
+      const [key, value] = cur.split('=');
+      acc[key] = value;
+      return acc;
+    }, {});
+    history.replaceState(query, '');
+
+  const currentRoute = routes.find(route => new RegExp(`${route.path}/?$`).test(hash));
+  routerView.innerHTML = '';
+  routerView.append(new currentRoute.component().el);
+
+  window.scrollTo(0, 0);
+}
 
 export function createRouter(routes) {
   return function() {
